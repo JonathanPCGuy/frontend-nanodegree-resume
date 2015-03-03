@@ -86,6 +86,7 @@ function logClicks(x,y) {
 
 $(document).click(function(loc) {
   // your code goes here!
+  logClicks(loc.pageX, loc.pageY);
 });
 
 
@@ -242,3 +243,13 @@ window.addEventListener('resize', function(e) {
   //Make sure the map bounds get updated on page resize
  map.fitBounds(mapBounds);
 });
+
+
+// my defined helper functions
+function formatHTML(template, text) {
+  return template.replace('%data%', text);
+}
+
+function formatIfStringPresent(template, text) {
+  return $.type(text) === 'string' ? formatHTML(template, text) : '';
+}

@@ -9,7 +9,19 @@ var work = {
       "description": "Manageability Software",
       "dates": "May 2007 - current"
     }
-  ]
+  ],
+  display:  function() {
+  for(job in work.jobs) {
+    $("#workExperience").append(HTMLworkStart);
+    var formattedWorkTitle = formatHTML(HTMLworkTitle, work.jobs[job].title);
+    var formattedEmployer = formatHTML(HTMLworkEmployer, work.jobs[job].employer);
+    var formattedDates = formatHTML(HTMLworkDates, work.jobs[job].dates);
+    var formattedLocation = formatHTML(HTMLworkLocation, work.jobs[job].location);
+    var formattedDescription = formatHTML(HTMLworkDescription, work.jobs[job].description);
+    var formattedEntry = formattedEmployer + formattedWorkTitle + formattedDates + formattedLocation + formattedDescription;
+    $(".work-entry:last").append(formattedEntry);
+  }
+}
 };
 
 
@@ -34,7 +46,22 @@ var projects = {
       ]
     }
   ],
+  display: function() {
 
+  for (pIndex in projects.projects) {
+    var singleProject = projects.projects[pIndex];
+    $("#projects").append(HTMLprojectStart);
+    var projectHtml = formatHTML(HTMLprojectTitle, singleProject.title);
+    projectHtml = projectHtml.concat(formatHTML(HTMLprojectDates, singleProject.dates));
+    projectHtml = projectHtml.concat(formatHTML(HTMLprojectDescription, singleProject.description));
+    for(iIndex in singleProject.images)
+    {
+      projectHtml = projectHtml.concat(formatHTML(HTMLprojectImage, singleProject.images[iIndex]));
+    }
+    $(".project-entry:last").append(projectHtml);
+
+    }
+  }
 };
 
 // TODO: fix formatting
@@ -54,8 +81,58 @@ var bio = {
     "Java",
     "Ruby on Rails",
     "Javascript"
-  ]
-};
+  ],
+
+  "biopic" : "images/me.jpg",
+
+  contactInfoString : function() {
+    // better way to do this?
+    var returnString = "";
+    // TODO: does this do the null/undef/etc. check too?
+    // i can just interate overthe wholecontacts object?
+    returnString += formatIfStringPresent(HTMLemail,this.contacts.email);
+    returnString += formatIfStringPresent(HTMLtwitter,this.contacts.twitter);
+    returnString += formatIfStringPresent(HTMLmobile,this.contacts.mobile);
+    returnString += formatIfStringPresent(HTMLgithub,this.contacts.github);
+    returnString += formatIfStringPresent(HTMLblog,this.contacts.blog);
+    returnString += formatIfStringPresent(HTMLlocation,this.contacts.location);
+
+    console.log(returnString);
+    return returnString;
+  },
+  // the function that calls all of the other display functions.
+  // broken up for maintainability and readability
+  display: function() {
+    this.displayContactsInfo();
+    this.displayNameAndRole();
+    this.displayBiopic();
+    this.displaySkills();
+  },
+
+  displayContactsInfo : function() {
+    var contactString = this.contactInfoString();
+    $('#topContacts').append(contactString);
+    $('#footerContacts').append(contactString);
+   },
+
+  displayNameAndRole: function() {
+    $("#nameAndPosition").append(formatHTML(HTMLheaderName, bio.name) + formatHTML(HTMLheaderRole, bio.role));
+   },
+
+  displaySkills: function() {
+    if (this.skills.length > 0 ) {
+      $("#header").append(HTMLskillsStart);
+      this.skills.forEach( function(currentValue, index, array) {
+        $("#skills").append(formatHTML(HTMLskills, currentValue));
+      });
+    }
+  },
+
+  displayBiopic: function() {
+    $('#header').append(formatHTML(HTMLbioPic, this.biopic));
+  }
+
+}
 
 var education = {
   "schools":[
@@ -77,67 +154,36 @@ var education = {
       "dates": "2015",
       "url": "https://www.udacity.com/course/nd001"
     }
-  ]
-};
+  ],
 
-var formattedHTML = function(template, text) {
-  return template.replace("%data%", text);
-}
+  display: function() {
+    this.displaySchools();
+    this.displayOnlineCourses();
+  },
 
-var formattedName = HTMLheaderName.replace("%data%", bio.name);
-var formattedRole = HTMLheaderRole.replace("%data%", bio.role);
+  displaySchools : function() {
+    for (iSchool in this.schools) {
+    var singleSchool = this.schools[iSchool];
+    $("#education").append(HTMLschoolStart);
+    var schoolHtml = formatHTML(HTMLschoolName, singleSchool.name);
+    schoolHtml += formatHTML(HTMLschoolDegree, singleSchool.degree);
+    schoolHtml += formatHTML(HTMLschoolDates, singleSchool.dates);
+    schoolHtml += formatHTML(HTMLschoolLocation, singleSchool.location);
 
-var formattedNameRole = formattedName + formattedRole;
-$("#nameAndPosition").append(formattedNameRole);
+    // todo: insert majors
+    //schoolHtml += formatHTML(HTMLprojectLocation, singleSchool.dates));
 
-// is this formatted ok? TODO: fix
-if (bio.skills.length > 0 ) {
-  $("#header").append(HTMLskillsStart);
-  bio.skills.forEach(function(currentValue, index, array) {
-    var formattedSkill = formattedHTML(HTMLskills, currentValue);
-    $("#skills").append(formattedSkill);
-  });
-}
 
-projects.display = function() {
-  for (pIndex in projects.projects) {
-    var singleProject = projects.projects[pIndex];
-    $("#projects").append(HTMLprojectStart);
-    var projectHtml = formattedHTML(HTMLprojectTitle, singleProject.title);
-    projectHtml = projectHtml.concat(formattedHTML(HTMLprojectDates, singleProject.dates));
-    projectHtml = projectHtml.concat(formattedHTML(HTMLprojectDescription, singleProject.description));
-    for(iIndex in singleProject.images)
-    {
-      var singleImage = singleProject.images[iIndex];
-      projectHtml = projectHtml.concat(formattedHTML(HTMLprojectImage, singleImage));
+    // url?
+    $(".education-entry:last").append(schoolHtml);
+
     }
-    $(".project-entry:last").append(projectHtml);
+  },
+
+  displayOnlineCourses: function() {
+
   }
-}
-
-projects.display();
-/*
-for(var i = 0; i < projects.projects.length; i++) {
-  $("#projects").append(HTMLprojectStart);
-  var formattedProjectTitle = formattedHTML(HTMLprojectTitle, projects.projects[i].title);
-  var formattedProjectEntry = formattedProjectTitle;
-  $(".project-entry:last").append(formattedProjectEntry);
-}*/
-
-var displayWork = function() {
-  for(job in work.jobs) {
-    $("#workExperience").append(HTMLworkStart);
-    var formattedWorkTitle = HTMLworkTitle.replace("%data%", work.jobs[job].title);
-    var formattedEmployer = HTMLworkEmployer.replace("%data%", work.jobs[job].employer);
-    var formattedDates = formattedHTML(HTMLworkDates, work.jobs[job].dates);
-    var formattedLocation = formattedHTML(HTMLworkLocation, work.jobs[job].location);
-    var formattedDescription = formattedHTML(HTMLworkDescription, work.jobs[job].description);
-    var formattedEntry = formattedEmployer + formattedWorkTitle + formattedDates + formattedLocation + formattedDescription;
-    $(".work-entry:last").append(formattedEntry);
-  }
-}
-
-displayWork();
+};
 
 function nameChanger(oldName) {
     var finalName = oldName;
@@ -158,3 +204,10 @@ function nameChanger(oldName) {
 };
 
 $("#mapDiv").append(googleMap);
+
+// here we call all the functions defined above to
+
+work.display();
+projects.display();
+bio.display();
+education.display();

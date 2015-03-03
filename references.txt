@@ -1,0 +1,2 @@
+http://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string
+  -reminded me of how to check if string or not via a helper function in jquery
