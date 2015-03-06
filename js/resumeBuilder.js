@@ -190,7 +190,7 @@ var education = {
         courseHtml += formatHTML(HTMLonlineSchool, course.school);
         courseHtml += formatHTML(HTMLonlineDates, course.date);
         courseHtml += formatHTML(HTMLonlineURL, course.url);
-        $('.education-entry:last').append(course);
+        $('.education-entry:last').append(courseHtml);
       });
     }
   }
